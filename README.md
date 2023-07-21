@@ -5,6 +5,7 @@ Depends on the following packages:
 - [numpy]
 - [scipy]
 - [matplotlib]
+- [sympy]
 
 ## Known Issues:
 None

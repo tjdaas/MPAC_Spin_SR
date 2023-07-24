@@ -6,6 +6,7 @@ Depends on the following packages:
 - [scipy]
 - [matplotlib]
 - [sympy]
+- [argparse]
 
 ## Known Issues:
 None

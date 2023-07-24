@@ -4,32 +4,44 @@ Calculating the MP AC along the \lambda path for different spin systems (w) and 
 
 import numpy as np
 import os.path
+import argparse
 from sub_codes.run_HF import SCF_HF
 from sub_codes.dmsuite import lagdif
 from sub_codes.run_eps import epsilon_12,epsilon_14
 from sub_codes.fin_spec_renorm import run_FSR
 from sub_codes.export_files import output
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--w", type=float, default=1., help="the amount of \beta-spin")
+    parser.add_argument("--spinflip", type=bool, default=False, action=argparse.BooleanOptionalAction, help="allow for spinflip  i.e. q=/=w or q=w")
+    parser.add_argument("--gridsize", type=float, default=100,help="the number of grid points")
+    parser.add_argument("--gridfactor",type=int,default=30,help="grid contraction, higher b's give more contracted grids")
+    parser.add_argument("--lambdastart",type=float,default=0.,help="the starting value of \lambda")
+    parser.add_argument("--lambdamax", type=float,default=20.,help="the maximum value of \lambda")
+    parser.add_argument("--stepsize", type=float,default=0.05,help="the stepsize in \lambda")
+    parser.add_argument("--nbasis", type=int, default=10,help="the number of basisfunctions used in the STO expansion of the HF orbital")
+    parser.add_argument("--iter",type=int,default=1000, help="maximum number of iterations per \lambda for the FSR algorithm")
+    parser.add_argument("--laplacianfactor",type=float,default=2.,help="constant added to avoid \eps+T to become negative, important for l>0 or \lambda<0")
+
 ##Input values
-w = 1/2 #the amount of alpha-spin
+args = parser.parse_args()
+w = args.w
 s= 1 - 2*w + 2*w**2 #spin factor
-spinflip=False # True or false to allow spinflip i.e. q=/=w or q=w
-lambdastart=0 #the value of \lambda you want to start at (for negative \lambda, you need to change ci)
-lambdamax=20 #the value of \lambda you want to end at (for negative \lambda, you need to change ci)
-stepsize=0.05 #the steps between each lambda
-nbasis = 10 #Number of basis states used in the STO ansatz
-N=100 #number of grid points
-b=40 #grid contraction, higher b's give more contracted grids
-max_num_iterat=1000 #max number of iterations
-ci=2 #add this when the denominator becomes negative, important for l>0 or \lambda<0
+spinflip = args.spinflip
+lambdastart = args.lambdastart #for negative \lambda, you need to change ci
+lambdamax = args.lambdamax #for negative \lambda, you need to change ci
+stepsize = args.stepsize
+nbasis = args.nbasis
+N = args.gridsize
+b = args.gridfactor
+max_num_iterat = args.iter #max number of iterations
+ci=args.laplacianfactor
 x,D = lagdif(N+1,2,b)  #to build the grid and define the laplacian 
 D2 = D[1,1:N+1:,1:N+1:] #defining the laplacian               
 x = np.delete(x,0)
 I = np.eye(len(D2)) #identity matrix for the laplacian 
-print(I.shape)
-print(D2.shape)
-print(x.shape)
-stop
+
 #HF code to find the HF orbital phi_zero that we need in our J and K
 normvec,Cmat1=SCF_HF(s,nbasis) 
 

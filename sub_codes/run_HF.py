@@ -1,3 +1,7 @@
+"""
+Calculates the HF orbital using a STO expansion using a SCF code.
+
+"""
 #Code written by Derk P. Kooi
 #These are all numerical integrals where the general integrals were worked out in mathematica and the solution is put here
 import numpy as np
@@ -94,3 +98,35 @@ def calculate_energy(eigenvals,Cmat,vhxmat,nbasis):
         for j in range(nbasis):
             energy -= 1/4*Cmat[i,0]*Cmat[j,0]*vhxmat[i,j]
     return energy
+
+def SCF_HF(s,nbasis):
+    """run the HF SCF to find the HF orbital for a specific s.
+
+    Args:
+        s (float): the spinfactor of the HF orbital.
+        nbasis (integer): the number of STO basisfunction used in the expansion for the HF orbital.
+
+    Returns:
+        ndarray,ndarray: 1d array containing the normalisations constants and 1d array containing the expansion coefficients of the STO expansion.
+    """
+    Z = 1 #Nuclear charge
+    n = 0 #main quantum number
+    basisn = range(1,nbasis+1) #n for the nbasis states
+    basisl = [0]*nbasis #Angular momentum l for the nbasis states
+    basism = [0]*nbasis #Angular momentum m_l for the nbasis states
+    basisa = [1.]*nbasis #Exponents a for the nbasis states
+    normvec = np.zeros(nbasis) #Normalization vector
+    iters = 50  #Number of self-consistent iterations
+    for i in range(nbasis):
+        normvec[i] = STOnorm(basisn[i],basisa[i]) #Fill normalization vector
+    F0mat,Smat = buildF0Smat(nbasis,basisn,basisl,basism,basisa,Z,normvec) #Build core fock matrix F_0 (kinetic + external potential) and overlap matrix
+    coulombmat = buildcoulombmat(nbasis,basisn,basisl,basism,basisa,s,normvec) #Build coulomb matrix
+    # Core Hamiltonian only starting values, eigh is the generalized eigensolver
+    eigenvals, Cmat = eigh(F0mat,Smat)
+    energies = np.zeros(iters) #Empty list for energies during self-consistent cycle
+    for iteration in range(iters):
+        vhxmat = buildvhmat(nbasis,Cmat,coulombmat) #Build new hartree-exchange matrix
+        Fmat = F0mat + 0.5*vhxmat #Build fock matrix from core fock matrix and hartree-exchange matrix
+        eigenvals, Cmat = eigh(Fmat, Smat) #Solve generalized eigenvalue problem
+        energies[iteration] = calculate_energy(eigenvals, Cmat, vhxmat,nbasis) #Calculate energy corresponding to the state
+    return normvec,Cmat[:,0]

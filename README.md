@@ -11,4 +11,4 @@ Depends on the following packages:
 None
 
 ## Future implementations:
-1. Clean up main.py into seperate functions instead of just 1 large main file
+1. write docstrings for run_HF.py

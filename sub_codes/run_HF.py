@@ -2,7 +2,7 @@
 Calculates the HF orbital using a STO expansion using a SCF code.
 
 """
-#Code written by Derk P. Kooi modified by Kimberly J. Daas
+#Code written by Derk P. Kooi and modified by Kimberly J. Daas
 #These are all numerical integrals were the general integrals were worked out in mathematica
 import numpy as np
 from scipy.special import factorial,hyp2f1

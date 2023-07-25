@@ -12,4 +12,4 @@ Depends on the following packages:
 None
 
 ## Future implementations:
-1. write docstrings for run_HF.py
+1. Allow for complex \lambda's, energies and wavefunctions.

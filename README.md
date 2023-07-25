@@ -1,5 +1,5 @@
-# MPAC_Spin_SR
-A code used to calculate the hydrogen atom with different fractional spins along the Moller Plesset Adiabatic Connection.
+# Investigation of the spin dependence of the Møller-Plesset adiabatic connection for one electron systems.
+A code used to calculate the hydrogen atom with different fractional spins along the Moller Plesset Adiabatic Connection using the finite difference spectral renormalisation algorithm.
 
 Depends on the following packages:
 - [numpy]

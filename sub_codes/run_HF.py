@@ -2,8 +2,8 @@
 Calculates the HF orbital using a STO expansion using a SCF code.
 
 """
-#Code written by Derk P. Kooi
-#These are all numerical integrals where the general integrals were worked out in mathematica and the solution is put here
+#Code written by Derk P. Kooi modified by Kimberly J. Daas
+#These are all numerical integrals were the general integrals were worked out in mathematica
 import numpy as np
 from scipy.special import factorial,hyp2f1
 from sympy.physics.wigner import wigner_3j
@@ -53,6 +53,7 @@ def radint(ni=1, nj=1, nk=1, nl=1, ai=1., aj=1., ak=1., al=1., l=0):
         return (aj+al)**(-1-nj-nl)*((ai+ak)**(l-ni-nk)*(aj+al)**(-l)*factorial(ni+nk-l-1)*factorial(l+nj+nl)+(aj+al)**(-ni-nk)*factorial(ni+nj+nk+nl)*(factorial(l+ni+nk)*hyp2f1(1+l+ni+nk, 1+ni+nj+nk+nl,2+l+ni+nk, - (ai+ak)/(aj+al))/factorial(1+l+ni+nk)-factorial(ni+nk-l-1)*hyp2f1(ni+nk-l, 1+ni+nj+nk+nl, 1-l+ni+nk, -(ai+ak)/(aj+al))/factorial(-l+ni+nk)))
 
 def coulombint(ni=1, nj=1, nk=1, nl=1, ai=1., aj=1., ak=1., al=1.,li=0,lj=0,lk=0,ll=0,mi=0,mj=0,mk=0,ml=0):
+    ### Builds the coulomb integral for given n, l amd m_l ###
     result = 0.
     if mk-mi == mj-ml:
         for l in range(max([abs(li-lk),abs(lj-ll),abs(mk-mi)]), min([li+lk, lj+ll])+1):
@@ -63,6 +64,20 @@ def coulombint(ni=1, nj=1, nk=1, nl=1, ai=1., aj=1., ak=1., al=1.,li=0,lj=0,lk=0
     return result  
 
 def buildF0Smat(nbasis,basisn,basisl,basism,basisa,Z,normvec):
+    """Builds the part of the Fock matrix that is indepedent of the HF orbital (so T+V_{ext}).
+
+    Args:
+        nbasis (int): the number of basisfunctions of the STO expansion.
+        basisn (list): the principal quantum number, n, for the nbasis STO basisfunctions.
+        basisl (list): the angular (azimuthal) quantum number, l, for the nbasis STO basisfunctions.
+        basism (list): the angular (magnetic) quantum number, m_l, for the nbasis STO basisfunctions.
+        basisa (list): the exponents of the nbasis STO basisfunctions.
+        Z (float): The nuclear charge of the atom.
+        normvec (ndarray): 1d array containing the normalisation vector of the STO basisfunctions.
+
+    Returns:
+        ndarray,ndarray: 2d array containing the unchanging part of the Fock Matrix and the 2d array of the overlap matrix
+    """
     ### Build unchanging part of Fock matrix and overlap Matrix ###
     F0mat = np.zeros((nbasis,nbasis))
     Smat = np.zeros((nbasis,nbasis))
@@ -77,7 +92,20 @@ def buildF0Smat(nbasis,basisn,basisl,basism,basisa,Z,normvec):
     return F0mat,Smat
 
 def buildcoulombmat(nbasis,basisn,basisl,basism,basisa,s,normvec):
-    ### Build coulomb integrals symmetrized and normalized ###
+    """Builds the 4 integral coulombmatrix for a specific spinfactor s.
+
+    Args:
+        nbasis (int): the number of basisfunctions of the STO expansion.
+        basisn (list): the principal quantum number, n, for the nbasis STO basisfunctions.
+        basisl (list): the angular (azimuthal) quantum number, l, for the nbasis STO basisfunctions.
+        basism (list): the angular (magnetic) quantum number, m_l, for the nbasis STO basisfunctions.
+        basisa (list): the exponents of the nbasis STO basisfunctions.
+        s (float): the spinfactor needed to find the HF orbital.
+        normvec (ndarray): 1d array containing the normalisation vector of the STO basisfunctions.
+
+    Returns:
+        ndarray: 4d array containing the symmetrized coulomb integral matrix.
+    """
     coulombmat = np.zeros((nbasis,nbasis,nbasis,nbasis))
     for i in range(nbasis):
         for j in range(nbasis):
@@ -87,10 +115,30 @@ def buildcoulombmat(nbasis,basisn,basisl,basism,basisa,s,normvec):
     return coulombmat
 
 def buildvhmat(nbasis,Cmat,coulombmat):
-    ### Build Hartree-Exchange matrix with einsum and normalized orbitals ###
-     return np.einsum('x,w,iwjx->ij',Cmat[::,0],Cmat[::,0],coulombmat)
+    """Builds the Hartree Exchange matrix for a specific s.
+
+    Args:
+        nbasis (int): the number of basisfunctions of the STO expansion.
+        Cmat (ndarray): 2d array containing the coefficients of the STO expansion.
+        coulombmat (ndarray): 4d array containing the symmetrized coulomb integral matrix.
+
+    Returns:
+        ndarray: 2d array containing the Hartree Exchange matrix.
+    """
+    return np.einsum('x,w,iwjx->ij',Cmat[::,0],Cmat[::,0],coulombmat)
 
 def calculate_energy(eigenvals,Cmat,vhxmat,nbasis):
+    """calculates the RHF energy for a specific s.
+
+    Args:
+        eigenvals (ndarray): 1d array containing the HF orbital energies.
+        Cmat (ndarray): 2d array containing the coefficients of the STO expansion.
+        vhxmat (ndarray): 2d array containing the Hartree Exchange matrix.
+        nbasis (int): the number of basisfunctions of the STO expansion.
+
+    Returns:
+        float: the RHF HF energy
+    """
     ### Calculate energy corresponding to the restricted Hartree-Fock state ###
     energy = 0.
     energy = eigenvals[0]

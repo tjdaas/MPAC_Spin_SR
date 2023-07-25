@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("--w", type=float, default=1., help="the amount of \beta-spin")
     parser.add_argument("--spinflip", type=bool, default=False, action=argparse.BooleanOptionalAction, help="allow for spinflip  i.e. q=/=w or q=w")
     parser.add_argument("--gridsize", type=float, default=100,help="the number of grid points")
-    parser.add_argument("--gridfactor",type=int,default=30,help="grid contraction, higher values give more contracted grids")
+    parser.add_argument("--gridfactor",type=int,default=40,help="grid contraction, higher values give more contracted grids, lower than 40 could cause issues for the subleading orders")
     parser.add_argument("--lambdastart",type=float,default=0.,help="the starting value of \lambda")
     parser.add_argument("--lambdamax", type=float,default=20.,help="the maximum value of \lambda")
     parser.add_argument("--stepsize", type=float,default=0.05,help="the stepsize in \lambda")

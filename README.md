@@ -12,7 +12,7 @@ Depends on the following packages:
 1. --w: the amount of \beta-spin (float) (default=1.)
 2. --spinflip: allows or disallows spinflip  i.e. q=/=w or q=w (bool) (default=False)
 3. --gridsize: determines the size of the grid (int) (default=100)
-4. --gridfactor: contracts or expands the grid, higher values give more contracted grids (int) (default=30)
+4. --gridfactor: contracts or expands the grid, higher values give more contracted grids (int) (default=40)
 5. --lambdastart: the starting value of \lambda (float) (default=0.)
 6. --lambdamax: the maximum value of \lambda (float) (default=20.)
 7. --stepsize: the size of the steps in \lambda (float) (default=0.05)

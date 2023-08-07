@@ -10,50 +10,51 @@ from sympy.physics.wigner import wigner_3j
 from scipy.linalg import eigh
 
 def STOnorm(n=1, a=1.):
-    ### STO normalization ###
+    """Builds a vector containing the normalisation constants of the STO expansion."""
     return (2**n) *a**(n+1) / np.sqrt(a*n*factorial(2*n-1))
 
 def kin(n1=1, n2=1, a1=1., a2=1.):
-    ### Radial kinetic energy elements ###
+    """Calculates the radial kinetic energy."""
     return -1/2 * np.power(a1+a2,-1-n1-n2)*(a2*a2*(n1-1)*n1-2*a1*a2*n1*n2+a1*a1*(n2-1)*n2)*factorial(n1+n2-2)
 
 def kinnorm(n1=1, n2=1, a1=1., a2=1.):
-    ### Radial kinetic energy elements normalized ###
+    """Normalizes the radial kinetic energy."""
     return kin(n1, n2, a1,a2)*(2**n1) *a1**(n1+1) / np.sqrt(a1*n1*factorial(2*n1-1))*(2**n2) *a2**(n2+1) / np.sqrt(a2*n2*factorial(2*n2-1))
 
 def S(n1=1, n2=1, a1=1., a2=1.):
-    ### Overlap elements (radial) ###
+    """Calculates the overlap integral for the STO expansion."""
     return np.power(a1+a2,-1-n1-n2) * factorial(n1+n2)
 
 def Snorm(n1=1, n2=1, a1=1., a2=1.):
-    ### Overlap elements normalized ###  
+    """Normalizes the the overlap integral."""
     return np.power(a1+a2, -1-n1-n2)*2**(n1+n2)*a1**(n1+1)*a2**(n2+1)*factorial(n1+n2) / (np.sqrt(a1*n1*factorial(2*n1-1)*a2*n2*factorial(2*n2-1)))
 
 def Vext(n1=1, n2=1, a1=1., a2=1.):
-    ### External potential -1/r, not multiplied with Z ###
+    """Calculates the external potential -1/r, not multiplied with Z."""
     return - np.power(a1+a2, -n1-n2)*factorial(n1+n2-1)
 
 def Vextnorm(n1=1, n2=1, a1=1., a2=1.):
-    ### External potential normalized
+    """Normalizes the external potential."""
     return - 2**(n1+n2)*a1**(n1+1)*a2**(n2+1)*np.power(a1+a2, -n1-n2)*factorial(n1+n2-1) / (np.sqrt(a1*n1*factorial(2*n1-1)*a2*n2*factorial(2*n2-1)))
 
 def Veff(n1=1, n2=1, a1=1., a2=1.,l=1):
-    ### Expectation value of effective potential l(l+1)/(2r^2) ###
+    """Calculates the expectation value of effective potential/angular kinetic energy l(l+1)/(2r^2)."""
     return 0.5 * l*(l+1)*np.power(a1+a2, 1-n1-n2)*factorial(n1+n2-2)
 
 def Veffnorm(n1=1,n2=1,a1=1.,a2=1.,l=1):
-    ### Effective potential normalized ###
+    """Normalizes the effective potential."""
     return 2**(n1+n2-1)*l*(l+1)*np.power(a1+a2, 1-n1-n2)*factorial(n1+n2-2)*a1**(n1+1)*a2**(n2+1)/(np.sqrt(a1*n1*factorial(2*n1-1)*a2*n2*factorial(2*n2-1)))
 
 def hyp2f1reg(a, b, c, z):
+    """Regularizes the hypergeometric function."""
     return hyp2f1(a,b,c,z) / factorial(c-1)
 
 def radint(ni=1, nj=1, nk=1, nl=1, ai=1., aj=1., ak=1., al=1., l=0):
-    ### Radial part of the coulomb integral for given l. ###
+    """Calculates the radial part of the coulomb integral for given l."""
         return (aj+al)**(-1-nj-nl)*((ai+ak)**(l-ni-nk)*(aj+al)**(-l)*factorial(ni+nk-l-1)*factorial(l+nj+nl)+(aj+al)**(-ni-nk)*factorial(ni+nj+nk+nl)*(factorial(l+ni+nk)*hyp2f1(1+l+ni+nk, 1+ni+nj+nk+nl,2+l+ni+nk, - (ai+ak)/(aj+al))/factorial(1+l+ni+nk)-factorial(ni+nk-l-1)*hyp2f1(ni+nk-l, 1+ni+nj+nk+nl, 1-l+ni+nk, -(ai+ak)/(aj+al))/factorial(-l+ni+nk)))
 
 def coulombint(ni=1, nj=1, nk=1, nl=1, ai=1., aj=1., ak=1., al=1.,li=0,lj=0,lk=0,ll=0,mi=0,mj=0,mk=0,ml=0):
-    ### Builds the coulomb integral for given n, l amd m_l ###
+    """Builds the coulomb integral for given n, l amd m_l"""
     result = 0.
     if mk-mi == mj-ml:
         for l in range(max([abs(li-lk),abs(lj-ll),abs(mk-mi)]), min([li+lk, lj+ll])+1):

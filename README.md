@@ -25,3 +25,14 @@ None
 
 ## Future implementations:
 1. Allow for complex \lambda's, energies and wavefunctions.
+
+## License
+Møller-Plesset adiabatic connection Spectral Renormalisation Spin (MPAC_SR_Spin), a code used to calculate the hydrogen atom with different fractional spins along the Møller Plesset Adiabatic Connection using the finite difference spectral renormalisation algorithm.
+
+Copyright (C) 2023 Kimberly J. Daas
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/.

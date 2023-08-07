@@ -1,6 +1,5 @@
 """
 Calculates the HF orbital using a STO expansion using a SCF code.
-
 """
 #Code written by Derk P. Kooi and modified by Kimberly J. Daas
 #All the integrals were worked out analytically using Mathematica.
